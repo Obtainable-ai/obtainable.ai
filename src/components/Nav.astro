@@ -1,0 +1,35 @@
+---
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="border-b border-gray-200">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center">
+        <a href="/" class="text-xl font-semibold text-gray-900 hover:text-gray-600 transition-colors">
+          Obtainable.ai
+        </a>
+      </div>
+      <div class="flex items-center space-x-8">
+        <a 
+          href="/" 
+          class={`text-sm font-medium transition-colors ${currentPath === '/' ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}
+        >
+          Home
+        </a>
+        <a 
+          href="/articles" 
+          class={`text-sm font-medium transition-colors ${currentPath.startsWith('/articles') ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}
+        >
+          Articles
+        </a>
+        <a 
+          href="/contact" 
+          class={`text-sm font-medium transition-colors ${currentPath === '/contact' ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}
+        >
+          Contact
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

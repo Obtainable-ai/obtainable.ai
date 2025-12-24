@@ -1,0 +1,65 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Footer from '@/components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const articles = (await getCollection('articles'))
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+---
+
+<BaseLayout
+  title="Articles - Obtainable"
+  description="Insights and updates on building simple, useful AI products."
+  canonical="https://obtainable.ai/articles"
+>
+  <main id="main-content" class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-white drop-shadow-2xl">Articles</h1>
+    </header>
+
+    <section class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+      <ul class="divide-y divide-white/5">
+        {articles.map((article) => {
+          const formattedDate = new Date(article.data.publishDate).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          });
+
+          return (
+            <li class="p-6 md:p-8 transition-colors hover:bg-white/5">
+              <a href={`/articles/${article.slug}`} class="block space-y-3">
+                <div class="flex flex-wrap items-center gap-3 text-sm text-white/70">
+                  <span>{formattedDate}</span>
+                  <span class="text-white/40">•</span>
+                  <span>By {article.data.author}</span>
+                  {article.data.tags && article.data.tags.length > 0 && (
+                    <div class="flex flex-wrap items-center gap-2 ml-auto">
+                      {article.data.tags.map((tag) => (
+                        <span
+                          class="text-xs px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <h2 class="text-2xl md:text-3xl font-semibold text-white drop-shadow-lg">
+                  {article.data.title}
+                </h2>
+                <p class="text-base md:text-lg text-white/80 leading-relaxed">
+                  {article.data.description}
+                </p>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

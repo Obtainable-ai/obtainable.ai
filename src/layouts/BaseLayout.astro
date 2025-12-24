@@ -1,0 +1,99 @@
+---
+import { SEO } from 'astro-seo';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+}
+
+const {
+  title = 'Obtainable',
+  description = 'We build useful AI products.',
+  image = '/og-image.png',
+  canonical,
+} = Astro.props;
+
+const siteUrl = Astro.site?.toString() || 'https://obtainable.ai';
+const canonicalURL = canonical || new URL(Astro.url.pathname, siteUrl).toString();
+
+// GA4 Measurement ID - set via environment variable
+const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || '';
+const isProd = import.meta.env.PROD;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <SEO
+      title={title}
+      description={description}
+      canonical={canonicalURL}
+      openGraph={{
+        basic: {
+          title: title,
+          type: 'website',
+          image: new URL(image, siteUrl).toString(),
+        },
+        optional: {
+          description: description,
+        },
+      }}
+      twitter={{
+        card: 'summary_large_image',
+        title: title,
+        description: description,
+        image: new URL(image, siteUrl).toString(),
+      }}
+    />
+
+    {isProd && GA_MEASUREMENT_ID && (
+      <>
+        <!-- Google tag (gtag.js) -->
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+        <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          
+          // Consent Mode v2 defaults
+          gtag('consent', 'default', {
+            'analytics_storage': 'granted',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+          });
+
+          gtag('js', new Date());
+          gtag('config', GA_MEASUREMENT_ID);
+        </script>
+      </>
+    )}
+  </head>
+  <body class="bg-black text-white antialiased">
+    <div class="fixed inset-0 -z-10">
+      <div class="absolute inset-0 bg-black">
+        <picture>
+          <source srcset="/stars.webp" type="image/webp">
+          <img
+            src="/stars.jpg"
+            alt=""
+            class="w-full h-full object-cover opacity-80"
+          />
+        </picture>
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/25 via-black/10 to-black/35"></div>
+    </div>
+
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded">
+      Skip to main content
+    </a>
+    
+    <slot />
+  </body>
+</html>
